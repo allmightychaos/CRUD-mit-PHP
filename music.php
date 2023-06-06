@@ -1,17 +1,17 @@
-<!-- 
+<!--
     * Filename: ./CRUD-mit-PHP/music.php
-    * Created Date: Monday, June 5th 2023, 10:37:33 pm
+    * Created Date: Monday, June 5th 2023, 6:37:12 pm
     * Author: Samuel Weghofer
     * 
-    * Copyright (c) 2023 Samuel Weghofer 
+    * Copyright (c) 2023 Samuel Weghofer
 -->
 
 <?php
 // Verbindung zur Datenbank herstellen
 $servername = "localhost";
-$username = "y23_2A_NACHNAME";
-$password = "";
-$database = "y23_2A_NACHNAME";
+$username = "y23_2A_Weghofer";
+$password = "P&bS2ynaJyKD^Vj";
+$database = "y23_2A_Weghofer";
 
 $conn = new mysqli($servername, $username, $password, $database);
 
@@ -26,12 +26,12 @@ if (isset($_POST['submit']) && $_POST['submit'] === "Neu erstellen") {
     // Daten aus dem Formular abrufen
     $artist = $_POST['artist'];
     $album = $_POST['album'];
-    $published = intval($_POST['published']); // Nur das Jahr als Ganzzahl speichern
+    $published = $_POST['published'];
     $format = $_POST['format'];
 
     // Neue Daten in die Datenbank einfügen - SQL Injection vermeiden mit `?`
     $stmt = $conn->prepare("INSERT INTO music_collection (artist, album, published, format) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("ssis", $artist, $album, $published, $format);
+    $stmt->bind_param("ssss", $artist, $album, $published, $format);
     $stmt->execute();
     $stmt->close();
 
@@ -71,6 +71,9 @@ function displayEntries($conn)
             $published = $row['published'];
             $format = $row['format'];
 
+            // Datum in Jahr umwandeln
+            $year = date('Y', strtotime($published));
+
             // Format umwandeln
             $displayFormat = '';
             switch ($format) {
@@ -91,7 +94,7 @@ function displayEntries($conn)
                     break;
             }
 
-            echo "<tr><td>$artist</td><td>$album</td><td>$published</td><td>$displayFormat</td><td><form method='POST'><button id='deleteButton' type='submit' name='delete' value='$id'>Löschen</button></form></td></tr>";
+            echo "<tr><td>$artist</td><td>$album</td><td class='center'>$year</td><td class='center'>$displayFormat</td><td><form method='POST'><button id='deleteButton' type='submit' name='delete' value='$id'>Löschen</button></form></td></tr>";
         }
     } else {
         echo "<tr><td style='text-align: center; padding-top: 26px;' colspan='5'>Keine Einträge vorhanden / gefunden.</td></tr>";
@@ -150,14 +153,16 @@ function displayEntries($conn)
         }
 
         .ctr-published > input {
-            width: 80px;
+            width: 112px;
             height: 16px;
             padding: 5px 15px;
         }
 
         .ctr-format > select {
-            width: 112px;
+            width: 144px;
             height: 28px;
+
+            text-align: center;
         }
 
         input[type="submit"] {
@@ -182,7 +187,11 @@ function displayEntries($conn)
 
         tr:first-child > th {
             width: 466px;
-            max-width: 466px;
+            max-width: 466px;   
+        }
+
+        tr:first-child > th:not(:first-child, :nth-child(2)) {
+            text-align: center;
         }
 
         #deleteButton {
@@ -193,6 +202,11 @@ function displayEntries($conn)
             border: 1px solid black;
             border-radius: 5px;
         }
+
+        .center {
+            text-align: center;
+        }
+
     </style>
 </head>
 <body>
@@ -212,7 +226,7 @@ function displayEntries($conn)
 
                     <div class="ctr ctr-published">
                         <label for="published">Veröffentlicht am: </label>
-                        <input type="text" id="published" name="published" placeholder="Datum">
+                        <input type="date" id="published" name="published" placeholder="Datum">
                     </div>
 
                     <div class="ctr ctr-format">
