@@ -29,7 +29,7 @@ if (isset($_POST['submit']) && $_POST['submit'] === "Neu erstellen") {
     $published = intval($_POST['published']); // Nur das Jahr als Ganzzahl speichern
     $format = $_POST['format'];
 
-    // Neue Daten in die Datenbank einfügen
+    // Neue Daten in die Datenbank einfügen - SQL Injection vermeiden mit `?`
     $stmt = $conn->prepare("INSERT INTO music_collection (artist, album, published, format) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("ssis", $artist, $album, $published, $format);
     $stmt->execute();
