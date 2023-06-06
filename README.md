@@ -4,7 +4,6 @@
 
 <br>
 
-
 ## Datenbank erstellen (auf PHPMyAdmin):
 
 Wichtig, mann muss `AUTO_INCREMENT` mit dazu verwenden, damit die ID automatisch hochzählt - sonst wirft es einen Error.
